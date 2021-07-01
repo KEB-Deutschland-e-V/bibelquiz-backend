@@ -16,8 +16,10 @@
   "author": "Dominik Sigmund",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "sigmundd-config": "^1.9.0",
+    "sigmundd-log": "^2.10.1",
     "sigmundd-security": "^2.0.0"
   }
 }

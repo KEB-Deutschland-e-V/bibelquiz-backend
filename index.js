@@ -1,8 +1,6 @@
 const fs = require('fs')
 
 const express = require('express')
-const session = require('express-session')
-const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const https = require('https')
 const http = require('http')
@@ -38,7 +36,6 @@ const corsOptions = {
 let app = express()
 
 app.use(security(config.security))
-app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.use(cors(corsOptions))
@@ -68,7 +65,6 @@ app.post('/highscore', (req, res) => {
   // TODO: write into database
 })
 
-app.get('/_metrics', metrics.endpoint)
 
 
 app.options('*', cors(corsOptions))
