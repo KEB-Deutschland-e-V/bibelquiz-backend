@@ -1,0 +1,21 @@
+{
+  "name": "bibelquiz-backend",
+  "version": "0.0.1",
+  "description": "The Backend for the bibelquiz",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bibel",
+    "quiz",
+    "backend",
+    "node.js",
+    "express"
+  ],
+  "author": "Dominik Sigmund",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
