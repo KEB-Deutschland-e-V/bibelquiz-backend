@@ -33,6 +33,9 @@ const corsOptions = {
   preflightContinue: false
 }
 
+const mysql = require('mysql2');
+const connection = mysql.createConnection(config.database);
+
 let app = express()
 
 app.use(security(config.security))
@@ -50,19 +53,56 @@ app.get('/_health', (req, res) => {
 })
 
 app.get('/difficulties', (req, res) => {
-  // TODO: read from database
+  connection.query(
+    'SELECT id, name FROM difficulties',
+    function(err, results) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.json(results)
+      }
+    }
+  );
 })
 
 app.get('/questions', (req, res) => {
-  // TODO: read from database
+  connection.query(
+    'SELECT * FROM questions',
+    function(err, results) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.json(results)
+      }
+    }
+  );
 })
 
 app.get('/highscores', (req, res) => {
-  // TODO: read from database
+  connection.query(
+    'SELECT * FROM highscores',
+    function(err, results) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.json(results)
+      }
+    }
+  );
 })
 
 app.post('/highscore', (req, res) => {
-  // TODO: write into database
+  connection.execute(
+    'INSERT INTO `highscores` (username, score) VALUES (?,?)',
+    [req.body.username, req.body.score],
+    function(err, results, fields) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.sendStatus(201)
+      }
+    }
+  );
 })
 
 
