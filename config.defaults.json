@@ -1,0 +1,25 @@
+{
+  "port": 3000,
+  "database": {
+    "server":"",
+    "database":"",
+    "user":"",
+    "password":""
+  },
+  "ssl": {
+    "active": false,
+    "key":"",
+    "cert":""
+  },
+  "log": {
+    "name": "myteam-backend",
+    "graylog": {
+      "active": false
+    },
+  "loglevel": "WARN"
+  },
+  "security": {
+    "allowedMethods":["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "onlyDefinedRoutes": false
+  }
+}
