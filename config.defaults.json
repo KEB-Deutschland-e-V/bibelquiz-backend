@@ -19,7 +19,17 @@
   "loglevel": "WARN"
   },
   "security": {
-    "allowedMethods":["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    "onlyDefinedRoutes": false
+    "allowedMethods":["GET", "POST", "OPTIONS"],
+    "onlyDefinedRoutes": true,
+    "definedRoutes": [
+      "/_health",
+      "/version",
+      "/difficulties",
+      "/questions",
+      "/highscores",
+      "/highscore",
+      "/stats",
+      "/stat"
+    ]
   }
 }

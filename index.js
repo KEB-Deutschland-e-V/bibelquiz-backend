@@ -29,12 +29,19 @@ const corsOptions = {
   ],
   credentials: true,
   origin: '*',
-  methods: 'GET,HEAD,OPTIONS,PUT,POST,DELETE',
+  methods: 'GET,HEAD,OPTIONS,POST',
   preflightContinue: false
 }
 
 const mysql = require('mysql2');
-const connection = mysql.createConnection(config.database);
+let connection;
+try {
+  connection = mysql.createConnection(config.database);
+} catch (error) {
+  log.error(error)
+  process.exit(1)
+}
+
 
 let app = express()
 
