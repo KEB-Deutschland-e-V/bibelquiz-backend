@@ -105,7 +105,32 @@ app.post('/highscore', (req, res) => {
   );
 })
 
+app.get('/stats', (req, res) => {
+  connection.query(
+    'SELECT * FROM question_stats',
+    function(err, results) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.json(results)
+      }
+    }
+  );
+})
 
+app.post('/stat', (req, res) => {
+  connection.execute(
+    'INSERT INTO `question_stats` (question, answer) VALUES (?,?)',
+    [req.body.question, req.body.answer],
+    function(err, results, fields) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.sendStatus(201)
+      }
+    }
+  );
+})
 
 app.options('*', cors(corsOptions))
 
