@@ -13,7 +13,7 @@ const security = require('sigmundd-security')
 const version = require('./package.json').version
 
 
-let config = new Config()
+let config = new Config(process.env.PWD)
 let log = new Log(config.log)
 
 log.debug('Config: ' + JSON.stringify(config))
