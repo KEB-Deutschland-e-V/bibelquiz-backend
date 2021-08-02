@@ -51,7 +51,7 @@ app.use(bodyParser.json())
 app.use(cors(corsOptions))
 
 
-app.get('/version', (req, res) => {
+app.get('/_version', (req, res) => {
   res.send(version)
 })
 
@@ -88,6 +88,19 @@ app.get('/questions', (req, res) => {
 app.get('/highscores/:difficulty', (req, res) => {
   connection.query(
     'SELECT username, score FROM highscores WHERE difficulty=' + req.params.difficulty + ' ORDER BY score DESC',
+    function(err, results) {
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        res.json(results)
+      }
+    }
+  );
+})
+
+app.get('/highscores', (req, res) => {
+  connection.query(
+    'SELECT username, score FROM highscores ORDER BY difficulty, score DESC',
     function(err, results) {
       if (err) {
         res.status(500).json(err)
