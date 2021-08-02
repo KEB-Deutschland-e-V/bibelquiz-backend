@@ -85,9 +85,9 @@ app.get('/questions', (req, res) => {
   );
 })
 
-app.get('/highscores', (req, res) => {
+app.get('/highscores/:difficulty', (req, res) => {
   connection.query(
-    'SELECT * FROM highscores',
+    'SELECT username, score FROM highscores WHERE difficulty=' + req.params.difficulty + ' ORDER BY score DESC',
     function(err, results) {
       if (err) {
         res.status(500).json(err)
@@ -100,8 +100,8 @@ app.get('/highscores', (req, res) => {
 
 app.post('/highscore', (req, res) => {
   connection.execute(
-    'INSERT INTO `highscores` (username, score) VALUES (?,?)',
-    [req.body.username, req.body.score],
+    'INSERT INTO `highscores` (username, score, difficulty) VALUES (?,?, ?)',
+    [req.body.username, req.body.score, req.body.difficulty],
     function(err, results, fields) {
       if (err) {
         res.status(500).json(err)
