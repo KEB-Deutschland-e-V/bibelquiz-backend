@@ -14,7 +14,6 @@ docker run \
 --env LOG_LOGLEVEL=${BQ_LOGLEVEL} \
 --name bibelquiz-backend \
 --restart unless-stopped \
---network="host"
+--network="host" \
 -p ${BQ_BACKEND_PORT}:3000 \
 -d bibelquiz/backend:latest
-
