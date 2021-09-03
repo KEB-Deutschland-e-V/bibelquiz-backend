@@ -12,7 +12,7 @@
     "cert":""
   },
   "log": {
-    "name": "myteam-backend",
+    "name": "bibelquiz-backend",
     "graylog": {
       "active": false
     },
@@ -20,16 +20,7 @@
   },
   "security": {
     "allowedMethods":["GET", "POST", "OPTIONS"],
-    "onlyDefinedRoutes": true,
-    "definedRoutes": [
-      "/_health",
-      "/version",
-      "/difficulties",
-      "/questions",
-      "/highscores",
-      "/highscore",
-      "/stats",
-      "/stat"
-    ]
+    "onlyDefinedRoutes": false,
+    "definedRoutes": []
   }
 }

@@ -7,13 +7,13 @@ docker stop bibelquiz-backend || :
 docker rm bibelquiz-backend || :
 
 docker run \
---env DATABASE_DATABASE=bibelquiz \
---env DATABASE_HOST=database \
---env DATABASE_USER=bibelquiz \
---env DATABASE_PASSWORD=bibelquiz \
---env LOG_LOGLEVEL=DEBUG \
+--env DATABASE_DATABASE=${BQ_DATABASE_DATABASE} \
+--env DATABASE_HOST=${BQ_DATABASE_HOST} \
+--env DATABASE_USER=${BQ_DATABASE_USER} \
+--env DATABASE_PASSWORD=${BQ_DATABASE_PASSWORD} \
+--env LOG_LOGLEVEL=${BQ_LOGLEVEL} \
 --name bibelquiz-backend \
 --restart unless-stopped \
---link bibelquiz-database:database \
--p 3000:3000 \
+--network="host" \
+-p ${BQ_BACKEND_PORT}:3000 \
 -d bibelquiz/backend:latest
