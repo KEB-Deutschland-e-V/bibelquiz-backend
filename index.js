@@ -100,8 +100,8 @@ app.get('/highscores', (req, res) => {
 
 app.post('/highscore', (req, res) => {
   connection.execute(
-    'INSERT INTO `highscores` (username, score) VALUES (?,?)',
-    [req.body.username, req.body.score],
+    'INSERT INTO `highscores` (username, score, difficulty) VALUES (?,?,?)',
+    [req.body.username, req.body.score, req.body.difficulty],
     function(err, results, fields) {
       if (err) {
         res.status(500).json(err)
