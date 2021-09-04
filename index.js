@@ -141,8 +141,8 @@ app.get('/stats', (req, res) => {
 
 app.post('/stat', (req, res) => {
   connection.execute(
-    'INSERT INTO `question_stats` (question, answer) VALUES (?,?)',
-    [req.body.question, req.body.answer],
+    'INSERT INTO `question_stats` (question, answer, correct) VALUES (?,?,?)',
+    [req.body.question, req.body.answer, req.body.correct],
     function(err, results, fields) {
       if (err) {
         res.status(500).json(err)
