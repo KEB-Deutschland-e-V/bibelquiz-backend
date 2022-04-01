@@ -98,7 +98,7 @@ let questions = []
 try {
   connection = mysql.createConnection(config.database);
   connection.query(
-    'SELECT id, name FROM difficulties',
+    'SELECT id, name, points FROM difficulties',
     function(err, results) {
       if (err) {
         log.error(err)
