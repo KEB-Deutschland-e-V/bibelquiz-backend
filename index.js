@@ -141,6 +141,11 @@ app.use(cors(corsOptions))
 app.get('/_version', (req, res) => {
   res.send(version)
 })
+app.get('/_version.json', (req, res) => {
+  res.json({
+    version: version
+  })
+})
 
 app.get('/_health', (req, res) => {
   res.sendStatus(200)

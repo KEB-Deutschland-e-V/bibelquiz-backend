@@ -15,5 +15,5 @@ docker run \
 --name bibelquiz-backend \
 --restart unless-stopped \
 --network="host" \
--p ${BQ_BACKEND_PORT}:3000 \
+-p ${BQ_BACKEND_PORT}:3001 \
 -d bibelquiz/backend:latest
