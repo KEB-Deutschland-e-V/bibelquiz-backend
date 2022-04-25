@@ -146,6 +146,11 @@ app.get('/_version.json', (req, res) => {
     version: version
   })
 })
+app.get('/_version_motor.json', (req, res) => {
+  res.json([{
+    version: version
+  }])
+})
 
 app.get('/_health', (req, res) => {
   res.sendStatus(200)
