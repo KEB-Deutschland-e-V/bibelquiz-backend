@@ -95,38 +95,10 @@ const mysql = require('mysql2');
 let connection;
 let difficulties = []
 let questions = []
-try {
-  connection = mysql.createConnection(config.database);
-  connection.query(
-    'SELECT id, name, points FROM difficulties',
-    function(err, results) {
-      if (err) {
-        log.error(err)
-        process.exit(2)
-      } else {
-        difficulties = results;
-        metrics.customMetrics['difficulties'].set(difficulties.length)
-        connection.query(
-          'SELECT * FROM questions',
-          function(err, results2) {
-            if (err) {
-              log.error(err)
-              process.exit(3)
-            } else {
-              questions = results2;
-              metrics.customMetrics['questions'].set(questions.length)
-            }
-          }
-        );
+let hash = 0
 
-      }
-    }
-  );
-} catch (error) {
-  log.error(error)
-  process.exit(1)
-}
-
+loadQuestions();
+setInterval(loadQuestions, config.reloadinterval);
 
 let app = express()
 
@@ -172,6 +144,10 @@ app.get('/difficulties', (req, res) => {
 app.get('/questions', (req, res) => {
   log.debug('Get /questions')
   res.json(questions)
+})
+app.get('/hash', (req, res) => {
+  log.debug('Get /hash')
+  res.send(hash.toString())
 })
 
 app.get('/highscores/:difficulty', (req, res) => {
@@ -284,3 +260,53 @@ if (config.ssl.active) {
 server.listen(config.port)
 
 log.info(`bibelquiz-backend is running on Port ${config.port}`)
+
+function loadQuestions() {
+  try {
+    connection = mysql.createConnection(config.database);
+    connection.query(
+      'SELECT id, name, points FROM difficulties',
+      function(err, results) {
+        if (err) {
+          log.error(err)
+          process.exit(2)
+        } else {
+          difficulties = results;
+          metrics.customMetrics['difficulties'].set(difficulties.length)
+          connection.query(
+            'SELECT * FROM questions',
+            function(err, results2) {
+              if (err) {
+                log.error(err)
+                process.exit(3)
+              } else {
+                questions = results2;
+                metrics.customMetrics['questions'].set(questions.length)
+                let newhash = JSON.stringify(questions).hashCode()
+                if (newhash !== hash) {
+                  log.info('Questions changed! New Hash: ' + newhash)
+                  hash = newhash
+                }
+                log.debug(questions.length + ' Questions loaded')
+              }
+            }
+          );
+  
+        }
+      }
+    );
+  } catch (error) {
+    log.error(error)
+    process.exit(1)
+  }
+}
+String.prototype.hashCode = function(){
+	var hash = 0;
+	if (this.length == 0) return hash;
+	for (i = 0; i < this.length; i++) {
+		char = this.charCodeAt(i);
+		hash = ((hash<<5)-hash)+char;
+		hash = hash & hash; // Convert to 32bit integer
+	}
+	return hash;
+}
