@@ -1,6 +1,6 @@
 {
   "name": "bibelquiz-backend",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "The Backend for the bibelquiz",
   "main": "index.js",
   "scripts": {
