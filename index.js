@@ -97,6 +97,13 @@ let difficulties = []
 let questions = []
 let hash = 0
 
+try {
+  connection = mysql.createConnection(config.database);
+} catch (error) {
+  log.error('Could not connect to database: ' + error)
+  process.exit(1)
+}
+
 loadQuestions();
 setInterval(loadQuestions, config.reloadinterval);
 
@@ -263,7 +270,6 @@ log.info(`bibelquiz-backend is running on Port ${config.port}`)
 
 function loadQuestions() {
   try {
-    connection = mysql.createConnection(config.database);
     connection.query(
       'SELECT id, name, points FROM difficulties',
       function(err, results) {
