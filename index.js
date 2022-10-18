@@ -91,6 +91,25 @@ metrics.addCustomMetric({
   help: 'Last Value of Highscores'
 }, Metrics.MetricType.GAUGE);
 
+metrics.addCustomMetric({
+  name: 'impressions_by_useragent',
+  help: 'How many impressions by useragent on start page',
+  labelNames: ['useragent']
+}, Metrics.MetricType.GAUGE);
+
+
+metrics.addCustomMetric({
+  name: 'right_answers',
+  help: 'Right Answers given',
+  labelNames: ['question']
+}, Metrics.MetricType.COUNTER);
+
+metrics.addCustomMetric({
+  name: 'wrong_answers',
+  help: 'Wrong Answers given',
+  labelNames: ['question']
+}, Metrics.MetricType.COUNTER);
+
 const mysql = require('mysql2');
 let connection;
 let difficulties = []
@@ -149,6 +168,7 @@ app.get('/difficulties', (req, res) => {
 })
 
 app.get('/questions', (req, res) => {
+  metrics.customMetrics['impressions_by_useragent'].labels(req.get('user-agent')).inc()
   log.debug('Get /questions')
   res.json(questions)
 })
@@ -229,8 +249,10 @@ app.post('/stat', (req, res) => {
   metrics.customMetrics['answers_total'].inc()
   if (req.body.correct === '1') {
     metrics.customMetrics['answers_right'].inc()
+    metrics.customMetrics['right_answers'].labels(req.body.question).inc()
   } else {
     metrics.customMetrics['answers_wrong'].inc()
+    metrics.customMetrics['wrong_answers'].labels(req.body.question).inc()
   }
   log.debug('Trying to enter stat: ' + JSON.stringify(req.body))
   connection.execute(
