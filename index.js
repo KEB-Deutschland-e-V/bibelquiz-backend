@@ -13,6 +13,9 @@ const Metrics = require('sigmundd-metrics')
 const security = require('sigmundd-security')
 const version = require('./package.json').version
 
+const DeviceDetector = require("device-detector-js");
+const deviceDetector = new DeviceDetector();
+
 
 let config = new Config(process.env.PWD)
 let log = new Log(config.log)
@@ -96,7 +99,24 @@ metrics.addCustomMetric({
   help: 'How many impressions by useragent on start page',
   labelNames: ['useragent']
 }, Metrics.MetricType.GAUGE);
-
+metrics.addCustomMetric({
+  name: 'impressions_by_device',
+  help: 'How many impressions by device on start page',
+  labelNames: ['device']
+}, Metrics.MetricType.GAUGE);
+metrics.addCustomMetric({
+  name: 'impressions_by_apptype',
+  help: 'How many impressions by apptype (ios,android,web) on start page',
+  labelNames: ['apptype']
+}, Metrics.MetricType.GAUGE);
+metrics.addCustomMetric({
+  name: 'impressions_ios_noapp',
+  help: 'How many impressions on ios withoout the app on start page',
+}, Metrics.MetricType.GAUGE);
+metrics.addCustomMetric({
+  name: 'impressions_android_noapp',
+  help: 'How many impressions on ios withoout the app on start page',
+}, Metrics.MetricType.GAUGE);
 
 metrics.addCustomMetric({
   name: 'right_answers',
@@ -168,7 +188,32 @@ app.get('/difficulties', (req, res) => {
 })
 
 app.get('/questions', (req, res) => {
-  metrics.customMetrics['impressions_by_useragent'].labels(req.get('user-agent')).inc()
+  let userAgent = req.headers['user-agent']
+  // UserAgent Count
+  metrics.customMetrics['impressions_by_useragent'].labels(userAgent).inc()
+
+  switch (userAgent) {
+    case 'bibelquiz-ios-app':
+      metrics.customMetrics['impressions_by_apptype'].labels('bibelquiz-ios-app').inc();
+      break;
+    case 'bibelquiz-android-app':
+      metrics.customMetrics['impressions_by_apptype'].labels('bibelquiz-android-app').inc();
+      break;
+    default:
+      metrics.customMetrics['impressions_by_apptype'].labels('web').inc();
+      const device = deviceDetector.parse(userAgent);
+      metrics.customMetrics['impressions_by_device'].labels(device.device.type).inc()
+      // iOS No App Count
+      if (device.os.name === 'iOS') {
+        metrics.customMetrics['impressions_ios_noapp'].inc()
+      }
+      // Android No App Count
+      if (device.os.name === 'Android') {
+        metrics.customMetrics['impressions_android_noapp'].inc()
+      }
+      break;
+  }
+
   log.debug('Get /questions')
   res.json(questions)
 })
