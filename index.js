@@ -99,6 +99,10 @@ metrics.addCustomMetric({
 }, Metrics.MetricType.GAUGE);
 
 metrics.addCustomMetric({
+  name: 'impressions_total',
+  help: 'How many impressions on start page',
+}, Metrics.MetricType.GAUGE);
+metrics.addCustomMetric({
   name: 'impressions_by_useragent',
   help: 'How many impressions by useragent on start page',
   labelNames: ['useragent']
@@ -206,6 +210,8 @@ app.get('/questions', (req, res) => {
   let userAgent = req.headers['user-agent']
   // UserAgent Count
   metrics.customMetrics['impressions_by_useragent'].labels(userAgent).inc()
+  // total count
+  metrics.customMetrics['impressions_total'].inc()
 
   switch (userAgent) {
     case 'bibelquiz-ios-app':
