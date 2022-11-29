@@ -15,5 +15,7 @@ docker run \
 --name bibelquiz-backend \
 --restart unless-stopped \
 --network="host" \
+--log-driver=loki \
+--log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
 -p ${BQ_BACKEND_PORT}:3001 \
 -d bibelquiz/backend:latest

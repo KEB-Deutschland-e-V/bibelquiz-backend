@@ -50,6 +50,10 @@ metrics.addCustomMetric({
   help: 'Number of Difficulties in System'
 }, Metrics.MetricType.GAUGE);
 metrics.addCustomMetric({
+  name: 'gamemodes',
+  help: 'Number of Gamemodes in System'
+}, Metrics.MetricType.GAUGE);
+metrics.addCustomMetric({
   name: 'questions',
   help: 'Number of Questions in System'
 }, Metrics.MetricType.GAUGE);
@@ -130,6 +134,12 @@ metrics.addCustomMetric({
   labelNames: ['question']
 }, Metrics.MetricType.COUNTER);
 
+metrics.addCustomMetric({
+  name: 'wrong_answers_percentage',
+  help: 'Wrong Answers given in Percentage',
+  labelNames: ['question']
+}, Metrics.MetricType.COUNTER);
+
 const mysql = require('mysql2');
 let connection;
 let difficulties = []
@@ -185,6 +195,11 @@ app.get('/_ready', (req, res) => {
 app.get('/difficulties', (req, res) => {
   log.debug('Get /difficulties')
   res.json(difficulties)
+})
+
+app.get('/gamemodes', (req, res) => {
+  log.debug('Get /gamemodes')
+  res.json(gamemodes)
 })
 
 app.get('/questions', (req, res) => {
@@ -298,6 +313,7 @@ app.post('/stat', (req, res) => {
   } else {
     metrics.customMetrics['answers_wrong'].inc()
     metrics.customMetrics['wrong_answers'].labels(req.body.question).inc()
+    
   }
   log.debug('Trying to enter stat: ' + JSON.stringify(req.body))
   connection.execute(
@@ -346,6 +362,7 @@ function loadQuestions() {
         } else {
           difficulties = results;
           metrics.customMetrics['difficulties'].set(difficulties.length)
+          log.debug(difficulties.length + ' Difficulties loaded')
           connection.query(
             'SELECT * FROM questions',
             function(err, results2) {
@@ -361,6 +378,19 @@ function loadQuestions() {
                   hash = newhash
                 }
                 log.debug(questions.length + ' Questions loaded')
+                connection.query(
+                  'SELECT * FROM gamemodes',
+                  function(err, results3) {
+                    if (err) {
+                      log.error(err)
+                      process.exit(4)
+                    } else {
+                      gamemodes = results3;
+                      metrics.customMetrics['gamemodes'].set(gamemodes.length)
+                      log.debug(gamemodes.length + ' Gamemodes loaded')
+                    }
+                  }
+                )
               }
             }
           );
