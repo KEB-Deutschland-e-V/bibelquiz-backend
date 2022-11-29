@@ -260,8 +260,20 @@ app.get('/highscores/:difficulty', (req, res) => {
 
 app.get('/highscores', (req, res) => {
   log.debug('Get /highscores/')
+  let difficulty = req.query.difficulty
+  let gamemode = req.query.gamemode
+  let sql = ''
+  if (difficulty && gamemode) {
+    sql = 'SELECT username, score FROM highscores WHERE difficulty=' + difficulty + ' AND gamemode=' + gamemode + ' ORDER BY score DESC'
+  } else if (difficulty && !gamemode) {
+    sql = 'SELECT username, score FROM highscores WHERE difficulty=' + difficulty + ' ORDER BY score DESC'
+  } else if (!difficulty && gamemode) {
+    sql = 'SELECT username, score FROM highscores WHERE gamemode=' + gamemode + ' ORDER BY score DESC'
+  } else {
+    sql = 'SELECT username, score FROM highscores ORDER BY score DESC'
+  }
   connection.query(
-    'SELECT username, score, difficulty FROM highscores ORDER BY difficulty, score DESC',
+    sql,
     function(err, results) {
       if (err) {
         log.error(err)
