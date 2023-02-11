@@ -118,6 +118,13 @@ metrics.addCustomMetric({
   labelNames: ['apptype']
 }, Metrics.MetricType.GAUGE);
 metrics.addCustomMetric({
+  name: 'impressions_by_device_and_apptype',
+  help: 'How many impressions by apptype and device on start page',
+  labelNames: ['device', 'apptype']
+}, Metrics.MetricType.GAUGE);
+
+
+metrics.addCustomMetric({
   name: 'impressions_ios_noapp',
   help: 'How many impressions on ios withoout the app on start page',
 }, Metrics.MetricType.GAUGE);
@@ -262,16 +269,34 @@ app.get('/highscores', (req, res) => {
   log.debug('Get /highscores/')
   let difficulty = req.query.difficulty
   let gamemode = req.query.gamemode
-  let sql = ''
-  if (difficulty && gamemode) {
-    sql = 'SELECT username, score FROM highscores WHERE difficulty=' + difficulty + ' AND gamemode=' + gamemode + ' ORDER BY score DESC'
-  } else if (difficulty && !gamemode) {
-    sql = 'SELECT username, score FROM highscores WHERE difficulty=' + difficulty + ' ORDER BY score DESC'
-  } else if (!difficulty && gamemode) {
-    sql = 'SELECT username, score FROM highscores WHERE gamemode=' + gamemode + ' ORDER BY score DESC'
-  } else {
-    sql = 'SELECT username, score FROM highscores ORDER BY score DESC'
+  let year = req.query.year
+  let month = req.query.month
+  let filter = ''
+  if (gamemode || difficulty || year || month) {
+    filter = ' WHERE '
   }
+  if (gamemode) {
+    filter += 'gamemode="' + gamemode + '"'
+  }
+  if (difficulty) {
+    if (filter.length > 7) {
+      filter += ' AND '
+    }
+    filter += 'difficulty=' + difficulty
+  }
+  if (year) {
+    if (filter.length > 7) {
+      filter += ' AND '
+    }
+    filter += 'YEAR(`when`)=' + year
+  }
+  if (month) {
+    if (filter.length > 7) {
+      filter += ' AND '
+    }
+    filter += 'MONTH(`when`)=' + month
+  }
+  let sql = 'SELECT username, `when` as date, score, gamemode, difficulty FROM highscores  ' + filter + ' ORDER BY score DESC'
   connection.query(
     sql,
     function(err, results) {
